@@ -48,7 +48,7 @@ function App() {
   // Editor state
   const [activePanel, setActivePanel] = useState<'properties' | 'seo' | 'accessibility' | 'performance' | null>('properties');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeSidebarPanel, setActiveSidebarPanel] = useState('components');
+  const [activeSidebarPanel, setActiveSidebarPanel] = useState('templates');
   const [components, setComponents] = useState<Component[]>([]);
   const [selectedComponentId, setSelectedComponentId] = useState<string | undefined>();
   const [pages, setPages] = useState<Page[]>([
@@ -547,6 +547,44 @@ function App() {
     }
   }, [currentProject.id]);
 
+  // Fonction pour gérer la sélection d'un template
+  const handleTemplateSelect = useCallback((templateId: string, templateComponents?: Component[]) => {
+    if (!templateComponents) return;
+    
+    // Remplacer tous les composants par ceux du template
+    setComponents(templateComponents);
+    setSelectedComponentId(undefined);
+    
+    // Mettre à jour la page actuelle
+    setPages(prev => prev.map(page => 
+      page.id === currentPageId 
+        ? { ...page, components: templateComponents, updatedAt: new Date() }
+        : page
+    ));
+    
+    setCurrentProject(prev => ({
+      ...prev,
+      components: templateComponents,
+      pages: prev.pages?.map(page => 
+        page.id === currentPageId 
+          ? { ...page, components: templateComponents, updatedAt: new Date() }
+          : page
+      ),
+      updatedAt: new Date()
+    }));
+
+    // Afficher un message de succès
+    addToast({
+      type: 'success',
+      title: 'Template appliqué',
+      message: `Le template a été appliqué avec succès`,
+      duration: 3000
+    });
+
+    // Basculer vers le panel composants après application
+    setActiveSidebarPanel('components');
+  }, [currentPageId, addToast]);
+
   // Fonctions de gestion des pages
   const handlePageChange = useCallback((pageId: string) => {
     const page = pages.find(p => p.id === pageId);
@@ -665,6 +703,7 @@ function App() {
           onUpdateProject={handleUpdateProject}
           onAddToMediaLibrary={handleAddToMediaLibrary}
           onSubmitFeedback={handleFeedbackSubmit}
+          onTemplateSelect={handleTemplateSelect}
         />
         
         <Canvas
@@ -683,6 +722,7 @@ function App() {
           snapToGrid={snapToGrid}
           mediaLibrary={mediaLibrary}
           onAddToMediaLibrary={handleAddToMediaLibrary}
+          sidebarCollapsed={sidebarCollapsed}
         />
         
         {!isPreviewMode && (

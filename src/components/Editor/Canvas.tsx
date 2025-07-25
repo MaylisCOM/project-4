@@ -1,7 +1,15 @@
 import React from 'react';
-import { Move, Lock, Unlock, Eye, EyeOff, Copy, Trash2 } from 'lucide-react';
+import { Lock, Unlock, Eye, EyeOff, Copy, Trash2 } from 'lucide-react';
 import { Component } from '../../types';
 import DraggableComponent from './DraggableComponent';
+
+interface MediaItem {
+  id: string;
+  name: string;
+  url: string;
+  type: string;
+  size: number;
+}
 
 interface CanvasProps {
   components: Component[];
@@ -19,6 +27,7 @@ interface CanvasProps {
   snapToGrid?: boolean;
   mediaLibrary?: MediaItem[];
   onAddToMediaLibrary?: (file: File, url: string) => MediaItem;
+  sidebarCollapsed?: boolean;
 }
 
 const Canvas: React.FC<CanvasProps> = ({
@@ -36,7 +45,8 @@ const Canvas: React.FC<CanvasProps> = ({
   showGrid = false,
   snapToGrid = true,
   mediaLibrary,
-  onAddToMediaLibrary
+  onAddToMediaLibrary,
+  sidebarCollapsed = false
 }) => {
   const canvasWidths = {
     desktop: 'w-full max-w-none',
@@ -55,7 +65,7 @@ const Canvas: React.FC<CanvasProps> = ({
 
       const newComponent: Component = {
         id: `${componentType}-${Date.now()}`,
-        type: componentType as any,
+        type: componentType as Component['type'],
         content: getDefaultContent(componentType),
         styles: getDefaultStyles(componentType),
         position: { 
@@ -90,20 +100,24 @@ const Canvas: React.FC<CanvasProps> = ({
 
   const handleComponentAction = (action: string, componentId: string) => {
     switch (action) {
-      case 'delete':
+      case 'delete': {
         onComponentDelete(componentId);
         break;
-      case 'duplicate':
+      }
+      case 'duplicate': {
         onComponentDuplicate(componentId);
         break;
-      case 'lock':
+      }
+      case 'lock': {
         const component = components.find(c => c.id === componentId);
         onComponentLock(componentId, !component?.locked);
         break;
-      case 'visibility':
+      }
+      case 'visibility': {
         const comp = components.find(c => c.id === componentId);
         onComponentVisibility(componentId, !comp?.visible);
         break;
+      }
     }
   };
 
@@ -115,16 +129,21 @@ const Canvas: React.FC<CanvasProps> = ({
   };
 
   return (
-    <div className="flex-1 bg-gray-50 overflow-auto">
+    <div 
+      className="flex-1 bg-gray-50 overflow-auto transition-all duration-300"
+      style={{
+        width: sidebarCollapsed ? 'calc(100% - 60px)' : 'calc(100% - 280px)'
+      }}
+    >
       <div className="flex justify-center p-8">
         <div 
-          className={`bg-white shadow-lg transition-all duration-300 min-h-screen relative ${canvasWidths[viewMode]} ${
+          className={`bg-white shadow-lg transition-all duration-300 relative ${canvasWidths[viewMode]} ${
             viewMode !== 'desktop' ? 'mx-auto' : ''
           } ${showGrid ? 'bg-grid' : ''}`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onClick={handleCanvasClick}
-          style={{ minHeight: '800px' }}
+          style={{ minHeight: components.length === 0 ? '400px' : 'auto' }}
         >
           {/* Grid overlay */}
           {showGrid && (

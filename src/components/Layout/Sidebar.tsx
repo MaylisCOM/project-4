@@ -17,6 +17,7 @@ import ComponentLibrary from '../Editor/ComponentLibrary';
 import PagesPanel from '../Pages/PagesPanel';
 import LanguageSettings from '../Settings/LanguageSettings';
 import FeedbackSettings from '../Settings/FeedbackSettings';
+import TemplateLibrary from '../Templates/TemplateLibrary';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -34,12 +35,16 @@ interface SidebarProps {
   currentLanguage?: string;
   availableLanguages?: string[];
   onSubmitFeedback?: (feedback: any) => void;
+  onTemplateSelect?: (template: any) => void;
+  currentProject?: any;
+  onUpdateProject?: (updates: any) => void;
+  onAddToMediaLibrary?: (file: File, url: string) => any;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
   isCollapsed,
   onToggleCollapse,
-  activePanel = 'components',
+  activePanel = 'templates',
   onPanelChange,
   onPageChange,
   onPageCreate,
@@ -54,9 +59,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   onSubmitFeedback,
   currentProject,
   onUpdateProject,
-  onAddToMediaLibrary
+  onAddToMediaLibrary,
+  onTemplateSelect
 }) => {
   const sidebarPanels = [
+    { id: 'templates', label: 'Templates', icon: FileText },
     { id: 'components', label: 'Composants', icon: Layers },
     { id: 'design', label: 'Design', icon: Palette },
     { id: 'accessibility', label: 'Accessibilité', icon: Eye },
@@ -140,6 +147,10 @@ const Sidebar: React.FC<SidebarProps> = ({
               transition={{ duration: 0.2 }}
               className="h-full"
             >
+              {activePanel === 'templates' && onTemplateSelect && (
+                <TemplateLibrary onTemplateSelect={onTemplateSelect} />
+              )}
+              
               {activePanel === 'components' && (
                 <ComponentLibrary />
               )}
