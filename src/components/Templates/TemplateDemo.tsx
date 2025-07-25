@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import TemplatePage from '../Pages/TemplatePage';
+import Canvas from '../Editor/Canvas';
+import ComponentLibrary from '../Editor/ComponentLibrary';
 import { modernBusinessTemplate } from '../../data/templates/modernBusinessTemplate';
 import { creativePortfolioTemplate } from '../../data/templates/creativePortfolioTemplate';
 import { Component } from '../../types';
@@ -11,6 +12,7 @@ import { Component } from '../../types';
  * - Charger un template depuis les données
  * - Permettre l'édition de tous les textes et images
  * - Gérer les mises à jour des composants
+ * - Ajouter des modules via drag and drop
  */
 const TemplateDemo: React.FC = () => {
   // État pour stocker les composants du template
@@ -39,6 +41,11 @@ const TemplateDemo: React.FC = () => {
     setCurrentTemplate(template);
     setComponents(template === 'modern' ? modernBusinessTemplate : creativePortfolioTemplate);
     setSelectedComponentId(undefined);
+  };
+
+  // Fonction pour ajouter un nouveau composant (module)
+  const handleComponentAdd = (newComponent: Component) => {
+    setComponents(prevComponents => [...prevComponents, newComponent]);
   };
 
   return (
@@ -79,16 +86,40 @@ const TemplateDemo: React.FC = () => {
         </p>
       </div>
 
-      {/* Affichage du template */}
-      <div className="flex-1 overflow-auto bg-gray-50">
-        <TemplatePage
-          components={components}
-          isPreviewMode={false}
-          viewMode="desktop"
-          onComponentUpdate={handleComponentUpdate}
-          onComponentSelect={handleComponentSelect}
-          selectedComponentId={selectedComponentId}
-        />
+      {/* Conteneur principal avec bibliothèque de composants et canvas */}
+      <div className="flex flex-1 overflow-hidden bg-gray-50">
+        {/* Bibliothèque de composants draggable */}
+        <div className="w-64 border-r border-gray-300">
+          <ComponentLibrary />
+        </div>
+
+        {/* Canvas pour afficher et éditer les composants */}
+        <div className="flex-1 overflow-auto">
+          <Canvas
+            components={components}
+            onComponentUpdate={handleComponentUpdate}
+            onComponentSelect={handleComponentSelect}
+            onComponentAdd={handleComponentAdd}
+            onComponentDelete={(id) => setComponents(prev => prev.filter(c => c.id !== id))}
+            onComponentDuplicate={(id) => {
+              const compToDuplicate = components.find(c => c.id === id);
+              if (compToDuplicate) {
+                const newComp = { ...compToDuplicate, id: `${compToDuplicate.type}-${Date.now()}` };
+                setComponents(prev => [...prev, newComp]);
+              }
+            }}
+            onComponentLock={(id, locked) => {
+              setComponents(prev => prev.map(c => c.id === id ? { ...c, locked } : c));
+            }}
+            onComponentVisibility={(id, visible) => {
+              setComponents(prev => prev.map(c => c.id === id ? { ...c, visible } : c));
+            }}
+            selectedComponentId={selectedComponentId}
+            viewMode="desktop"
+            isPreviewMode={false}
+            snapToGrid={true}
+          />
+        </div>
       </div>
 
       {/* Panneau d'information sur le composant sélectionné */}
@@ -118,28 +149,23 @@ export default TemplateDemo;
  * 1. Importez les données du template:
  *    import { modernBusinessTemplate } from '../../data/templates/modernBusinessTemplate';
  * 
- * 2. Utilisez le composant TemplatePage:
- *    <TemplatePage
- *      components={modernBusinessTemplate}
- *      isPreviewMode={false}  // false pour permettre l'édition
+ * 2. Utilisez le composant Canvas et ComponentLibrary:
+ *    <ComponentLibrary />
+ *    <Canvas
+ *      components={components}
+ *      onComponentAdd={handleComponentAdd}
  *      onComponentUpdate={handleComponentUpdate}
  *      onComponentSelect={handleComponentSelect}
+ *      ...
  *    />
  * 
- * 3. Gérez les mises à jour des composants:
- *    - Textes: modifiables via content.text
- *    - Images: remplaçables via content.src
- *    - Styles: personnalisables via styles object
+ * 3. Gérez les mises à jour des composants et l'ajout via drag and drop.
  * 
- * 4. Intégration avec l'éditeur:
- *    - Le TemplateLibrary charge automatiquement les templates
- *    - Les composants sont ajoutés au Canvas
- *    - Le PropertyPanel permet de modifier tous les attributs
+ * 4. Intégration avec le PropertyPanel pour modifier les attributs.
  * 
  * AVANTAGES:
- * - Tous les éléments sont des composants réutilisables
+ * - Drag and drop pour ajouter des modules
  * - Édition en temps réel de tous les contenus
- * - Possibilité d'ajouter/supprimer des composants
  * - Support du drag & drop pour réorganiser
  * - Responsive design intégré
  */

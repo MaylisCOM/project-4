@@ -662,7 +662,13 @@ function App() {
   return (
     <div className="h-screen flex flex-col theme-bg">
       <Header
-        onPreview={() => setIsPreviewMode(!isPreviewMode)}
+        onPreview={() => {
+          // Save current project and current page id to localStorage
+          localStorage.setItem('previewProject', JSON.stringify(currentProject));
+          localStorage.setItem('previewCurrentPageId', currentPageId);
+          // Open preview.html in new tab
+          window.open('/preview.html', '_blank');
+        }}
         onSave={handleSave}
         onPublish={handlePublish}
         onStats={() => setShowStats(true)}

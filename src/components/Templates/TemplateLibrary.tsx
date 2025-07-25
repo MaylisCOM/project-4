@@ -57,20 +57,10 @@ const TemplateLibrary: React.FC<TemplateLibraryProps> = ({ onTemplateSelect }) =
             className="bg-gray-800 rounded-lg overflow-hidden cursor-pointer hover:bg-gray-700 transition-colors duration-200"
             onClick={() => handleTemplateClick(template)}
           >
-            <div className="aspect-video bg-gray-700 relative overflow-hidden">
-              <img
-                src={template.thumbnail}
-                alt={template.name}
-                className="w-full h-full object-cover opacity-80"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              <div className="absolute bottom-2 left-2 right-2">
-                <h4 className="text-white font-medium text-sm mb-1">{template.name}</h4>
-                <p className="text-gray-300 text-xs line-clamp-2">{template.description}</p>
-              </div>
-            </div>
             <div className="p-3">
-              <div className="flex items-center justify-between">
+              <h4 className="text-white font-medium text-sm mb-1">{template.name}</h4>
+              <p className="text-gray-300 text-xs line-clamp-2">{template.description}</p>
+              <div className="flex items-center justify-between mt-3">
                 <span className="text-xs text-gray-400">
                   Template complet
                 </span>
