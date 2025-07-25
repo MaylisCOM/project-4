@@ -92,28 +92,6 @@ const Header: React.FC<HeaderProps> = ({
           </span>
         </div>
         
-        <input
-          type="text"
-          value={projectName}
-          onChange={(e) => onProjectNameChange(e.target.value)}
-          className="text-lg font-semibold bg-transparent border-none outline-none focus:bg-white focus:bg-opacity-50 px-2 py-1 rounded theme-dark"
-          placeholder="Nom du projet"
-        />
-        
-        {!isPreviewMode && (
-          <>
-            <div className="h-6 w-px bg-gray-300" />
-            <button
-              onClick={() => {
-                // Cette fonction sera gérée par la sidebar
-                console.log('Ouvrir panneau composants');
-              }}
-              className="flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 rounded-lg font-medium transition-colors"
-            >
-              <span>Composants</span>
-            </button>
-          </>
-        )}
       </div>
 
       {/* Center Section - View Mode Controls */}
