@@ -1,0 +1,271 @@
+// Styles spécifiques à la landing page
+
+// Variables
+$primary-bg: #F0E8BB;
+$lavender: #E6E6FA;
+$olive: #808000;
+$orange: #e47f2c;
+$dark-contrast: #2D3748;
+$white : #FFFFFF;
+
+// Mixins pour la landing page
+@mixin hero-gradient {
+  background: linear-gradient(135deg, $lavender 0%, $orange 100%);
+}
+
+@mixin floating-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+@mixin pulse-animation {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+// Landing page principale
+.landing-page {
+  background-color: $white;
+  min-height: 100vh;
+  
+  // Header de la landing page
+  .landing-header {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 0;
+        
+        .brand {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          
+          .logo {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 8px;
+            @include hero-gradient;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.5rem;
+          }
+          
+          .brand-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: $dark-contrast;
+          }
+        }
+        
+        .nav {
+          display: none;
+          gap: 2rem;
+          
+          @media (min-width: 768px) {
+            display: flex;
+          }
+          
+          a {
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+            
+            &:hover {
+              color: $orange;
+            }
+          }
+        }
+        
+        .cta-button {
+          @include hero-gradient;
+          color: white;
+          padding: 0.5rem 1.5rem;
+          border-radius: 8px;
+          text-decoration: none;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba($orange, 0.3);
+          }
+        }
+      }
+    }
+  }
+  
+  // Section hero
+  .hero-section {
+    @include hero-gradient;
+    padding: 5rem 0;
+    position: relative;
+    overflow: hidden;
+    .hero-grid{
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: center;
+      .text-container{
+        p{
+          width: 68%;
+          margin: 1rem auto 4rem;
+        }
+      }
+    }
+  }
+  
+  // Section fonctionnalités
+  .features-section {
+    padding: 5rem 0;
+    
+    .features-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      
+      .features-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        
+        h2 {
+          font-size: 2.5rem;
+          font-weight: bold;
+          color: $dark-contrast;
+          margin-bottom: 1rem;
+        }
+        
+        p {
+          font-size: 1.25rem;
+          color: #6b7280;
+        }
+      }
+      
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        
+        .feature-card {
+          background: white;
+          border-radius: 12px;
+          padding: 2rem;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          text-align: center;
+          transition: all 0.3s ease;
+          
+          &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+          }
+          
+          .feature-icon {
+            width: 4rem;
+            height: 4rem;
+            background: $lavender;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            
+            svg {
+              color: $orange;
+            }
+          }
+          
+          h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: $dark-contrast;
+            margin-bottom: 0.5rem;
+          }
+          
+          p {
+            color: #6b7280;
+            line-height: 1.6;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes dragDemo {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(20px, -10px); }
+  50% { transform: translate(-15px, 15px); }
+  75% { transform: translate(10px, -5px); }
+}
+
+.demo-component {
+  &.animated {
+    animation: dragDemo 4s ease-in-out infinite;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .landing-page {
+    .hero-section {
+      padding: 3rem 0;
+      
+      .hero-content {
+        h1 {
+          font-size: 2.5rem;
+        }
+        
+        p {
+          font-size: 1.125rem;
+        }
+      }
+    }
+    
+    .features-section {
+      padding: 3rem 0;
+      
+      .features-header {
+        h2 {
+          font-size: 2rem;
+        }
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        
+        .feature-card {
+          padding: 1.5rem;
+        }
+      }
+    }
+  }
+}

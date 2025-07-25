@@ -1,0 +1,222 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Modèle Utilisateur
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Préférences utilisateur
+  language      String @default("fr")
+  theme         String @default("light")
+  notifications Boolean @default(true)
+  
+  // Relations
+  projects  Project[]
+  feedback  FeedbackItem[]
+  responses FeedbackResponse[]
+  
+  @@map("users")
+}
+
+// Modèle Projet
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  isPublished Boolean  @default(false)
+  url         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // SEO Settings
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String? // JSON array as string
+  seoLanguage    String @default("fr")
+  seoRobots      String @default("index, follow")
+  
+  // Performance Metrics
+  loadTime         Float? @default(0)
+  seoScore         Int?   @default(0)
+  accessibilityScore Int? @default(0)
+  mobileScore      Int?   @default(0)
+  
+  // Branding
+  logo        String?
+  favicon     String?
+  companyName String?
+  
+  // Multi-language
+  languages       String @default("fr") // JSON array as string
+  currentLanguage String @default("fr")
+  
+  // Relations
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pages      Page[]
+  components Component[]
+  media      MediaItem[]
+  
+  @@map("projects")
+}
+
+// Modèle Page
+model Page {
+  id         String   @id @default(cuid())
+  name       String
+  slug       String
+  isHomePage Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // SEO Settings spécifiques à la page
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String? // JSON array as string
+  customMeta     String? // JSON object as string
+  
+  // Relations
+  projectId  String
+  project    Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  components Component[]
+  
+  @@unique([projectId, slug])
+  @@map("pages")
+}
+
+// Modèle Composant
+model Component {
+  id      String @id @default(cuid())
+  type    String
+  content String // JSON object as string
+  styles  String // JSON object as string
+  
+  // Position et taille
+  positionX Int
+  positionY Int
+  width     String
+  height    String
+  
+  // Position et taille responsive (JSON)
+  responsivePosition String? // JSON object as string
+  responsiveSize     String? // JSON object as string
+  
+  // Propriétés
+  locked  Boolean @default(false)
+  visible Boolean @default(true)
+  layer   Int     @default(0)
+  
+  // SEO et Accessibilité
+  seoAlt         String?
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String? // JSON array as string
+  ariaLabel      String?
+  role           String?
+  tabIndex       Int?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  pageId    String?
+  page      Page?    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  
+  @@map("components")
+}
+
+// Modèle Template
+model Template {
+  id          String  @id @default(cuid())
+  name        String
+  description String
+  thumbnail   String
+  category    String
+  isPremium   Boolean @default(false)
+  price       Float?
+  author      String
+  rating      Float   @default(0)
+  downloads   Int     @default(0)
+  
+  // Scores
+  seoScore           Int? @default(0)
+  accessibilityScore Int? @default(0)
+  performanceScore   Int? @default(0)
+  
+  // Composants du template (JSON)
+  components String // JSON array as string
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("templates")
+}
+
+// Modèle Media
+model MediaItem {
+  id         String   @id @default(cuid())
+  name       String
+  url        String
+  type       String // 'image' | 'video'
+  size       Int
+  folder     String?
+  uploadedAt DateTime @default(now())
+  
+  // Relations
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@map("media_items")
+}
+
+// Modèle Feedback
+model FeedbackItem {
+  id          String   @id @default(cuid())
+  type        String // 'bug' | 'feature' | 'improvement' | 'question'
+  title       String
+  description String
+  status      String   @default("open") // 'open' | 'in-progress' | 'resolved' | 'closed'
+  priority    String   @default("medium") // 'low' | 'medium' | 'high' | 'critical'
+  votes       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  userId    String
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses FeedbackResponse[]
+  
+  @@map("feedback_items")
+}
+
+// Modèle Réponse Feedback
+model FeedbackResponse {
+  id         String   @id @default(cuid())
+  message    String
+  isOfficial Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  userId     String
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  feedbackId String
+  feedback   FeedbackItem @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+  
+  @@map("feedback_responses")
+}

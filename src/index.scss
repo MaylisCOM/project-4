@@ -1,0 +1,363 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import AOS styles */
+@import 'aos/dist/aos.css';
+
+/* Import landing page styles */
+@import './styles/landing.scss';
+
+/* Import accordion styles */
+@import './styles/accordion.scss';
+
+/* Mixins SCSS */
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin transition($property: all, $duration: 0.3s, $easing: ease) {
+  transition: $property $duration $easing;
+}
+
+@mixin hover-lift {
+  @include transition(transform, 0.3s, ease);
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@mixin gradient-bg($color1, $color2) {
+  background: linear-gradient(135deg, $color1 0%, $color2 100%);
+}
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.8s ease-out;
+}
+
+/* Theme classes */
+.theme-bg {
+  background-color: $white;
+}
+
+.theme-lavender {
+  background-color: $lavender;
+}
+
+.theme-olive {
+  color: $olive;
+}
+
+.theme-violet {
+  color: $orange;
+}
+
+.theme-dark {
+  color: $dark-contrast;
+}
+
+/* Styles d'accessibilité */
+.high-contrast {
+  filter: contrast(150%);
+}
+
+.large-text {
+  font-size: 1.2em !important;
+  
+  * {
+    font-size: inherit !important;
+  }
+}
+
+.reduced-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* Grid backgrounds */
+.bg-grid {
+  background-color: $primary-bg;
+  background-image: 
+    linear-gradient(to right, rgba($olive, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba($olive, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.bg-grid-editor {
+  background-image: 
+    linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+    linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Focus visible pour l'accessibilité */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Amélioration des contrastes */
+.high-contrast {
+  button {
+    border: 2px solid currentColor !important;
+  }
+  
+  input,
+  textarea,
+  select {
+    border: 2px solid #000 !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+}
+
+/* Chart animations */
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+/* Hover effects */
+.hover-lift {
+  @include hover-lift;
+}
+
+/* Gradient backgrounds */
+.gradient-lavender-violet {
+  @include gradient-bg($lavender, $orange);
+}
+
+/* Composants spécifiques */
+.landing-hero {
+  @include gradient-bg($lavender, $orange);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.1;
+    background-image: 
+      radial-gradient(circle at 20% 20%, white 2px, transparent 2px),
+      radial-gradient(circle at 80% 80%, white 2px, transparent 2px);
+    background-size: 100px 100px;
+    animation: float 20s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Styles pour les cartes */
+.feature-card {
+  @include transition();
+  @include hover-lift;
+  
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
+  .icon {
+    @include flex-center;
+    width: 4rem;
+    height: 4rem;
+    background-color: $lavender;
+    border-radius: 12px;
+    margin: 0 auto 1rem;
+    
+    svg {
+      color: $orange;
+    }
+  }
+  
+  h3 {
+    color: $dark-contrast;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+}
+
+/* Styles pour les boutons */
+.btn {
+  @include transition();
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  
+  &.btn-primary {
+    @include gradient-bg($lavender, $orange);
+    color: white;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba($orange, 0.3);
+    }
+  }
+  
+  &.btn-secondary {
+    background: white;
+    color: $orange;
+    border: 2px solid $orange;
+    
+    &:hover {
+      background: $orange;
+      color: white;
+    }
+  }
+  
+  &.btn-outline {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    
+    &:hover {
+      background: white;
+      color: $orange;
+    }
+  }
+}
+
+/* Styles pour le header */
+.header {
+  background-color: $primary-bg;
+  border-bottom: 1px solid rgba($olive, 0.2);
+  
+  .logo {
+    @include flex-center;
+    width: 2rem;
+    height: 2rem;
+    @include gradient-bg($lavender, $orange);
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    font-size: 0.875rem;
+  }
+  
+  .brand-name {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: $dark-contrast;
+    margin-left: 0.75rem;
+  }
+}
+
+/* Styles pour les statistiques */
+.stats-dashboard {
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    @include hover-lift;
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
+      
+      &.primary { color: $orange; }
+      &.secondary { color: $olive; }
+      &.success { color: #10b981; }
+      &.warning { color: #f59e0b; }
+    }
+    
+    .stat-label {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+    
+    .stat-change {
+      font-size: 0.75rem;
+      font-weight: 500;
+      
+      &.positive { color: #10b981; }
+      &.negative { color: #ef4444; }
+    }
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .feature-card {
+    padding: 1rem;
+    
+    .icon {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+  
+  .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+  
+  .header {
+    .brand-name {
+      font-size: 1.125rem;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-dashboard {
+    .stat-card {
+      padding: 1rem;
+      
+      .stat-value {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}
